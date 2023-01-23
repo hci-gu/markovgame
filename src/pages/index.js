@@ -276,44 +276,24 @@ const Edge = ({ edge }) => {
 
   if ((dir === 'up' || dir === 'down') && x1 !== x2) {
     return <>
-      {/* <line
-        x1={x1}
-        y1={y1}
-        x2={x1}
-        y2={y2}
+      <path
+        d={`M ${x1} ${y1} L ${x1} ${y2 - 5 * ys} A 5 5 0 0 ${xs > 0 ? ys > 0 ? 0 : 1 : ys > 0 ? 1 : 0} ${x1 + 5 * xs} ${y2} L ${x2 - 3 * xs} ${y2}`}
+        fill="none"
         stroke="black"
         strokeWidth="0.1"
-      />
-      <line
-        x1={x1}
-        y1={y2}
-        x2={x2}
-        y2={y2}
-        stroke="black"
-        strokeWidth="0.1"
-      /> */}
-      <path d={`M ${x1} ${y1} L ${x1} ${y2 - 10 * ys} A 10 10 0 0 ${xs > 0 ? ys > 0 ? 0 : 1 : ys > 0 ? 1 : 0} ${x1 + 10 * xs} ${y2} L ${x2} ${y2}`} fill="none" stroke="black" strokeWidth="0.1" />
+        markerEnd="url(#arrowhead)"
+        />
     </>
   }
   if ((dir === 'left' || dir === 'right') && y1 !== y2) {
     return <>
-      {/* <line
-        x1={x1}
-        y1={y1}
-        x2={x2}
-        y2={y1}
-        stroke="black"
-        strokeWidth="0.1"
+      <path
+      d={`M ${x1} ${y1} L ${x2 - 5 * xs} ${y1} A 5 5 0 0 ${xs > 0 ? ys > 0 ? 1 : 0 : ys > 0 ? 0 : 1} ${x2} ${y1 + 5 * ys} L ${x2} ${y2 - 3 * ys}`}
+      fill="none"
+      stroke="black"
+      strokeWidth="0.1"
+      markerEnd="url(#arrowhead)"
       />
-      <line
-        x1={x2}
-        y1={y1}
-        x2={x2}
-        y2={y2}
-        stroke="black"
-        strokeWidth="0.1"
-      /> */}
-      <path d={`M ${x1} ${y1} L ${x2 - 10 * xs} ${y1} A 10 10 0 0 ${xs > 0 ? ys > 0 ? 1 : 0 : ys > 0 ? 0 : 1} ${x2} ${y1 + 10 * ys} L ${x2} ${y2}`} fill="none" stroke="black" strokeWidth="0.1" />
     </>
   }
 
@@ -348,17 +328,14 @@ export default function Home() {
       } else if (event.key == 'ArrowDown') {
         if (nodeAt.actions?.down) {
           action = getAction(nodeAt.actions.down)
-          // setNodeAt(nodeAt.actions.down[0].next)
         }
       } else if (event.key == 'ArrowLeft') {
         if (nodeAt.actions?.left) {
           action = getAction(nodeAt.actions.left)
-          // setNodeAt(nodeAt.actions.left[0].next)
         }
       } else if (event.key == 'ArrowRight') {
         if (nodeAt.actions?.right) {
           action = getAction(nodeAt.actions.right)
-          // setNodeAt(nodeAt.actions.right[0].next)
         }
       }
 
@@ -390,11 +367,18 @@ export default function Home() {
   return (
     <>
       <svg width="100%" height="100%" viewBox="0 0 100 100">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+          refX="0" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="black" stroke="black" />
+          </marker>
+        </defs>
+
         {nodes.map((node) => (
-          <circle cx={node.x * 10 + 50} cy={node.y * 10 + 50} r="2" fill="black" stroke={node == nodeAt ? 'red' : 'none'} />
+          <circle key={`c_node_${node.x}_${node.y}`} cx={node.x * 10 + 50} cy={node.y * 10 + 50} r="2" fill="black" stroke={node == nodeAt ? 'red' : 'none'} />
         ))}
         {edges.map((edge) => (
-          <Edge key={edge.source.id + edge.target.id} edge={edge} />
+          <Edge key={`${edge.source.x} ${edge.source.y} ${edge.target.x} ${edge.target.y}`} edge={edge} />
         ))}
       </svg>
       <div className={styles.score}>
