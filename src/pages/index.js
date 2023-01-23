@@ -1,6 +1,3 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import { useState, useEffect } from 'react'
 
@@ -362,7 +359,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [nodeAt, score])
+  }, [nodeAt, score, attempts, atEnd])
 
   return (
     <>
@@ -384,7 +381,7 @@ export default function Home() {
       <div className={styles.score}>
         Score: { score } Attempts: { attempts }
       </div>
-      { atEnd && <div className={styles.end}>You reached the end! Press 'r' to restart.</div> }
+      { atEnd && <div className={styles.end}>You reached the end! Press &#39;r&#39; to restart.</div> }
     </>
   )
 }
