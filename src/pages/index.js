@@ -36,12 +36,14 @@ const game = {
         { p: 0.5, next: state({ rewards: [{ p: 1.0, value: -100 }] }) },
       ],
       left: [
-        { p: 0.5, next: state({ rewards: [{ p: 1.0, value: +100 }] }) },
-        { p: 0.5, next: state({ rewards: [{ p: 1.0, value: -90 }] }) },
+        // { p: 0.5, next: state({ rewards: [{ p: 1.0, value: +100 }] }) },
+        // { p: 0.5, next: state({ rewards: [{ p: 1.0, value: -90 }] }) },
+        { p: 1.0, rewards: [{ p: 0.5, value: 100 }, { p: 0.5, value: -90 }], next: state({ rewards: [{ p: 1.0, value: 0 }] }) },
       ],
       right: [
-        { p: 0.1, next: state({ rewards: [{ p: 1.0, value: +1000 }] }) },
-        { p: 0.9, next: state({ rewards: [{ p: 1.0, value: -50 }] }) },
+        // { p: 0.1, next: state({ rewards: [{ p: 1.0, value: +1000 }] }) },
+        // { p: 0.9, next: state({ rewards: [{ p: 1.0, value: -50 }] }) },
+        { p: 1.0, rewards: [{ p: 0.1, value: 1000 }, { p: 0.9, value: -50 }], next: state({ rewards: [{ p: 1.0, value: 0 }] }) },
       ],
     }
   })
@@ -50,6 +52,7 @@ const game = {
 const makeNewNode = ({ nodes, action, x, y}) => (
   {
     p: action.p,
+    rewards: action.rewards,
     next: addNodeFromState({
       nodes,
       state: action.next,
@@ -309,10 +312,13 @@ const Edge = ({ edge }) => {
 export default function Home() {
   const [nodeAt, setNodeAt] = useState(nodes[0])
   const [score, setScore] = useState(0)
+  const [lastReward, setLastReward] = useState(0)
   const [attempts, setAttempts] = useState(0)
   const [atEnd, setAtEnd] = useState(false)
 
   const edges = getEdges({ nodes })
+
+  console.log({ nodes })
 
   // listen to keyboard events
   useEffect(() => {
@@ -337,11 +343,16 @@ export default function Home() {
       }
 
       if (action) {
-        if (action.reward) {
-          setScore(score + action.reward)
+        let reward = 0
+        console.log({ action })
+        if (action.rewards) {
+          reward += getReward(action.rewards)
         }
-        const reward = getReward(action.next.rewards)
-        setScore(score + reward)
+        if (action.next.rewards) {
+          reward += getReward(action.next.rewards)
+        }
+        setLastReward(reward)
+        setScore(score => score + reward)
         setNodeAt(action.next)
         if (action.next.actions == null) {
           setAtEnd(true)
@@ -379,6 +390,9 @@ export default function Home() {
         ))}
       </svg>
       <div className={styles.score}>
+        Reward: { lastReward }
+        <br />
+        <br />
         Score: { score } Attempts: { attempts }
       </div>
       { atEnd && <div className={styles.end}>You reached the end! Press &#39;r&#39; to restart.</div> }
