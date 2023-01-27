@@ -2,55 +2,46 @@ import styles from '@/styles/Home.module.css'
 import { useState } from 'react'
 import Game from '@/components/Game'
 
-const state = ({rewards, actions}) => ({
-  rewards,
-  actions,
-})
-
-const test = {
-  start: state({
-    actions: {
-      up: [{ p: 1.0, next: state({ rewards: [{ p: 1.0, value: 10 }] }) }],
-      left: [{ p: 1.0, next: state({
-        rewards: [{ p: 1.0, value: -10 }],
-        actions: {
-          up: [
-            {p: 0.5, next: state({ rewards: [{p: 1.0, value: 10}], })},
-            {p: 0.5, next: state({ rewards: [{p: 1.0, value: -10}], })},
-          ]
-        }
-      }) }],
-    }
-  }),
-}
-
-// IGT
-const igt = {
-  start: state({
-    actions: {
-      up: [
-        { p: 1.0, rewards: [{ p: 0.5, value: 100 }, { p: 0.5, value: -50 }], next: state({ rewards: [{ p: 1.0, value: 0 }] }) },
-      ],
-      down: [
-        { p: 1.0, rewards: [{ p: 0.5, value: 10 }, { p: 0.5, value: -100 }], next: state({ rewards: [{ p: 1.0, value: 0 }] }) },
-      ],
-      left: [
-        { p: 1.0, rewards: [{ p: 0.5, value: 100 }, { p: 0.5, value: -90 }], next: state({ rewards: [{ p: 1.0, value: 0 }] }) },
-      ],
-      right: [
-        { p: 1.0, rewards: [{ p: 0.1, value: 1000 }, { p: 0.9, value: -50 }], next: state({ rewards: [{ p: 1.0, value: 0 }] }) },
-      ],
-    }
-  })
-}
+import igt from '@/games/igt'
+import die from '@/games/die'
+import coin from '@/games/coin'
+import addition from '@/games/addition'
+import balloon from '@/games/balloon'
+import igtVar from '@/games/igt-variant'
+import toy from '@/games/toy'
+import subtraction from '@/games/subtraction'
+import planning from '@/games/planning'
+import planning2 from '@/games/planning2'
+import patience from '@/games/patience'
+import memory from '@/games/memory'
+import risktaking from '@/games/risktaking'
+import riskavoidance from '@/games/riskavoidance'
+import doubleindet from '@/games/doubleindet'
 
 export default function Home() {
   const [game, setGame] = useState(igt)
+
+  const games = {
+    igt,
+    die,
+    coin,
+    addition,
+    balloon,
+    'igt-variant': igtVar,
+    toy,
+    subtraction,
+    planning,
+    planning2,
+    patience,
+    memory,
+    risktaking,
+    riskavoidance,
+    doubleindet,
+  }
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        <button onClick={() => setGame(igt)}>IGT</button>
-        <button onClick={() => setGame(test)}>Test</button>
+        { Object.keys(games).map((name, i) => <button key={i} onClick={() => setGame(games[name])}>{name}</button>) }
       </div>
       <Game game={game} />
     </>
