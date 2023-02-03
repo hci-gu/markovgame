@@ -13,6 +13,7 @@ export default function Game({ game }) {
 
   const [nodeAt, setNodeAt] = useState(nodes[0])
   const [score, setScore] = useState(0)
+  const [attemptScore, setAttemptScore] = useState(0)
   const [lastReward, setLastReward] = useState(0)
   const [attempts, setAttempts] = useState(0)
   const [atEnd, setAtEnd] = useState(false)
@@ -27,6 +28,7 @@ export default function Game({ game }) {
     setScore(0)
     setAttempts(0)
     setLastReward(0)
+    setAttemptScore(0)
   }, [game, nodes])
 
   // listen to keyboard events
@@ -61,6 +63,7 @@ export default function Game({ game }) {
           reward += getReward(action.next.rewards)
         }
         setLastReward(reward)
+        setAttemptScore(attemptScore => attemptScore + reward)
         setScore(score => score + reward)
         setNodeAt(action.next)
         if (action.next.actions == null) {
@@ -73,6 +76,8 @@ export default function Game({ game }) {
       if (event.key == 'r' && atEnd) {
         setNodeAt(nodes[0])
         setAtEnd(false)
+        setAttemptScore(0)
+        setLastReward(0)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -102,7 +107,7 @@ export default function Game({ game }) {
         Reward: { lastReward }
         <br />
         <br />
-        Score: { score } Attempts: { attempts }
+        Score: { attemptScore } Attempts: { attempts }
       </div>
       { atEnd && <div className={styles.end}>You reached the end! Press &#39;r&#39; to restart.</div> }
     </>
