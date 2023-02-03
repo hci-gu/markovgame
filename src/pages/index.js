@@ -63,7 +63,6 @@ export default function Home() {
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        {/* { Object.keys(games).map((name, i) => <button key={i} onClick={() => setGame(games[name])}>{name}</button>) } */}
         {/* dropdown to select game */}
         <select onChange={(e) => { setGame(games[e.target.value]); e.target.blur(); }}>
           { Object.keys(games).map((name, i) => <option key={i} value={name}>{name}</option>) }
