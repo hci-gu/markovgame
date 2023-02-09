@@ -17,6 +17,7 @@ export default function Game({ game }) {
   const [lastReward, setLastReward] = useState(0)
   const [attempts, setAttempts] = useState(0)
   const [atEnd, setAtEnd] = useState(false)
+  const [dir, setDir] = useState([0, 0])
 
   const edges = useMemo(() => {
     return getEdges({ nodes })
@@ -38,18 +39,22 @@ export default function Game({ game }) {
       if (event.key == 'ArrowUp') {
         if (nodeAt.actions?.up) {
           action = getAction(nodeAt.actions.up)
+          setDir([0, -1])
         }
       } else if (event.key == 'ArrowDown') {
         if (nodeAt.actions?.down) {
           action = getAction(nodeAt.actions.down)
+          setDir([0, 1])
         }
       } else if (event.key == 'ArrowLeft') {
         if (nodeAt.actions?.left) {
           action = getAction(nodeAt.actions.left)
+          setDir([-1, 0])
         }
       } else if (event.key == 'ArrowRight') {
         if (nodeAt.actions?.right) {
           action = getAction(nodeAt.actions.right)
+          setDir([1, 0])
         }
       }
 
@@ -65,6 +70,7 @@ export default function Game({ game }) {
         setLastReward(reward)
         setAttemptScore(attemptScore => attemptScore + reward)
         setScore(score => score + reward)
+        action.next.score = reward
         setNodeAt(action.next)
         if (action.next.actions == null) {
           setAtEnd(true)
@@ -74,6 +80,7 @@ export default function Game({ game }) {
 
       // if key is 'r'
       if (event.key == 'r' && atEnd) {
+        nodes.forEach(node => node.score = null)
         setNodeAt(nodes[0])
         setAtEnd(false)
         setAttemptScore(0)
@@ -102,6 +109,10 @@ export default function Game({ game }) {
         {edges.map((edge) => (
           <Edge key={`${edge.source.x} ${edge.source.y} ${edge.target.x} ${edge.target.y}`} edge={edge} />
         ))}
+        {nodes.map((node) => (
+          <text style={{ fontSize: 2, }} key={`t_node_${node.x}_${node.y}`} x={node.x * 10 + 50} y={node.y * 10 + 50} textAnchor="middle" dominantBaseline="middle" fill="white">{node.score}</text>
+        ))}
+        { atEnd && <text style={{ fontSize: 3, }} x={nodeAt.x * 10 + 50 + 6 * dir[0]} y={nodeAt.y * 10 + 50 + 5 * dir[1]} textAnchor="middle" dominantBaseline="middle" fill="black">{attemptScore}</text> }
       </svg>
       <div className={styles.score}>
         Reward: { lastReward }
