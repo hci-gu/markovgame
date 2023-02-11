@@ -4,7 +4,9 @@ import { Edge } from './Edge'
 
 import { getEdges, addNodeFromState, getAction, getReward, } from '@/utils/game'
 
-export default function Game({ game }) {
+const NUM_TRIALS = 75
+
+export default function Game({ game, onDone }) {
   const nodes = useMemo(() => {
     const nodes = []
     addNodeFromState({ nodes, state: game.start, x: 0, y: 0 })
@@ -18,6 +20,7 @@ export default function Game({ game }) {
   const [attempts, setAttempts] = useState(0)
   const [atEnd, setAtEnd] = useState(false)
   const [dir, setDir] = useState([0, 0])
+  const [gameOver, setGameOver] = useState(false)
 
   const edges = useMemo(() => {
     return getEdges({ nodes })
@@ -30,6 +33,7 @@ export default function Game({ game }) {
     setAttempts(0)
     setLastReward(0)
     setAttemptScore(0)
+    setGameOver(false)
   }, [game, nodes])
 
   // listen to keyboard events
@@ -60,7 +64,6 @@ export default function Game({ game }) {
 
       if (action) {
         let reward = 0
-        console.log({ action })
         if (action.rewards) {
           reward += getReward(action.rewards)
         }
@@ -79,7 +82,7 @@ export default function Game({ game }) {
       }
 
       // if key is 'r'
-      if (event.key == 'r' && atEnd) {
+      if (event.key == 'r' && atEnd && !gameOver) {
         nodes.forEach(node => node.score = null)
         setNodeAt(nodes[0])
         setAtEnd(false)
@@ -91,7 +94,14 @@ export default function Game({ game }) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [nodeAt, score, attempts, atEnd, nodes])
+  }, [nodeAt, score, attempts, atEnd, nodes, gameOver])
+
+  useEffect(() => {
+    if (attempts === NUM_TRIALS && !gameOver) {
+      setGameOver(true)
+      onDone(score)
+    }
+  }, [attempts, score, onDone, gameOver])
 
   return (
     <>
@@ -115,12 +125,10 @@ export default function Game({ game }) {
         { atEnd && <text style={{ fontSize: 3, }} x={nodeAt.x * 10 + 50 + 6 * dir[0]} y={nodeAt.y * 10 + 50 + 5 * dir[1]} textAnchor="middle" dominantBaseline="middle" fill="black">{attemptScore}</text> }
       </svg>
       <div className={styles.score}>
-        Reward: { lastReward }
-        <br />
-        <br />
-        Score: { attemptScore } Attempts: { attempts }
+        Score: {score} Attempts: { attempts }/{NUM_TRIALS}
       </div>
-      { atEnd && <div className={styles.end}>You reached the end! Press &#39;r&#39; to restart.</div> }
+      { atEnd && !gameOver && <div className={styles.end}>You reached the end! Press &#39;r&#39; to restart.</div> }
+      { gameOver && <div className={styles.end}>Game Over! Your score was {score}.</div> }
     </>
   )
 }
