@@ -11,13 +11,7 @@ import memory3 from '@/games/memory3'
 import memory4 from '@/games/memory4'
 import sequence from '@/games/sequence'
 
-const registerScore = (participantId, gameNumber, score) => {
-  console.log('registerScore', participantId, gameNumber, score)
-}
-
-const registerFeedback = (participantId, comment) => {
-  console.log('registerFeedback', participantId, comment)
-}
+import { registerScore, registerFeedback } from '@/utils/register'
 
 const TrialsOver = ({ participantId }) => {
   const [comment, setComment] = useState('')
