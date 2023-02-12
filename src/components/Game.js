@@ -125,10 +125,10 @@ export default function Game({ game, onDone }) {
         { atEnd && <text style={{ fontSize: 3, }} x={nodeAt.x * 10 + 50 + 6 * dir[0]} y={nodeAt.y * 10 + 50 + 5 * dir[1]} textAnchor="middle" dominantBaseline="middle" fill="black">{attemptScore}</text> }
       </svg>
       <div className={styles.score}>
-        Score: {score} Attempts: { attempts }/{NUM_TRIALS}
+        Poäng: {score} Försök: { attempts }/{NUM_TRIALS}
       </div>
-      { atEnd && !gameOver && <div className={styles.end}>You reached the end! Press &#39;r&#39; to restart.</div> }
-      { gameOver && <div className={styles.end}>Game Over! Your score was {score}.</div> }
+      { atEnd && !gameOver && <div className={styles.end}>Slut! Tryck &#39;r&#39; för att spela igen.</div> }
+      { gameOver && <div className={styles.end}>Spelet är slut! Din poäng blev {score}.</div> }
     </>
   )
 }
