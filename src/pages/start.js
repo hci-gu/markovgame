@@ -2,7 +2,10 @@ import styles from '@/styles/Home.module.css'
 import { useState } from 'react'
 import Link from 'next/link'
 
+import { createNewParticipantId } from '@/utils/participant'
+
 export default function Home() {
+  createNewParticipantId()
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>

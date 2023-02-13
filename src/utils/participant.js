@@ -13,7 +13,14 @@ const setParticipantId = (id) => {
   typeof localStorage !== 'undefined' && localStorage.setItem('participantId', id)
 }
 
+const createNewParticipantId = () => {
+  const newParticipantId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  typeof localStorage !== 'undefined' && localStorage.setItem('participantId', newParticipantId)
+  return newParticipantId
+}
+
 export {
   getParticipantId,
   setParticipantId,
+  createNewParticipantId,
 }
