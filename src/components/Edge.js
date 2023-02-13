@@ -32,10 +32,11 @@ export const Edge = ({ edge }) => {
         <line
             x1={x1}
             y1={y1}
-            x2={x2}
-            y2={y2}
+            x2={x2 - 3 * xs}
+            y2={y2 - 3 * ys}
             stroke="black"
-            strokeWidth="0.1" />
+            strokeWidth="0.1"
+            markerEnd="url(#arrowhead)" />
     </>
 }
 
