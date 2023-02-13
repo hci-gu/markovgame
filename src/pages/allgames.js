@@ -29,6 +29,11 @@ import memory4 from '@/games/memory4'
 import sequence from '@/games/sequence'
 import threeballoons from '@/games/threeballoons'
 
+import prov1 from '@/games/prov1'
+import prov2 from '@/games/prov2'
+import double from '@/games/double'
+import tripple from '@/games/tripple'
+
 export default function Home() {
   const [game, setGame] = useState(igt)
 
@@ -41,6 +46,8 @@ export default function Home() {
     'Single 6': patience,
     'Single 7': risktaking,
     'Single 8': riskavoidance,
+    'Single 9': prov1,
+    'Single 10': prov2,
     'Double 1': igt,
     'Double 2': igtVar,
     'Double 3': planning,
@@ -48,9 +55,11 @@ export default function Home() {
     'Double 5': threeballoons,
     'Double 6': memory1,
     'Double 7': memory2,
+    'Double 8': double,
     'Triple 1': maze,
     'Triple 2': memory3,
     'Triple 3': memory4,
+    'Triple 4': tripple,
     // die,
     // coin,
     // addition,

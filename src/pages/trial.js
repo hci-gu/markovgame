@@ -5,11 +5,12 @@ import styles from '../styles/Home.module.css'
 
 import { getParticipantId } from '@/utils/participant'
 
-import memory1 from '@/games/memory1'
-import memory2 from '@/games/memory2'
-import memory3 from '@/games/memory3'
-import memory4 from '@/games/memory4'
-import sequence from '@/games/sequence'
+import balloon from '@/games/balloon'
+import risktaking from '@/games/risktaking'
+import riskavoidance from '@/games/riskavoidance'
+import igtVariant from '@/games/igt-variant2'
+import double from '@/games/double'
+import tripple from '@/games/tripple'
 
 import { registerScore, registerFeedback } from '@/utils/register'
 
@@ -38,11 +39,12 @@ export default function Home() {
   const [promptNext, setPromptNext] = useState(false)
 
   const games = [
-    memory1,
-    memory2,
-    memory3,
-    memory4,
-    sequence,
+    balloon,
+    risktaking,
+    riskavoidance,
+    igtVariant,
+    double,
+    tripple,
   ]
 
   const onDone = (score) => {
