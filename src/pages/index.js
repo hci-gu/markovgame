@@ -1,3 +1,4 @@
+import styles from '@/styles/Home.module.css'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -13,12 +14,7 @@ export default function Home() {
 
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        {/* <Link href="/instructions"><button>Instruktioner</button></Link>
-        <Link href="/test1"><button>Provspel 1</button></Link>
-        <Link href="/test2"><button>Provspel 2</button></Link>
-        <Link href="/trial"><button>Spela</button></Link>
-        <Link href="/allgames"><button> ** all games ** </button></Link> */}
+      <div className={styles.main}>
         <h2>Välkommen till testet!</h2>
         <p>Testet består av fem olika spel av olika svårighetsgrad. Målet är att försöka samla så många poäng som möjligt i varje spel.</p>
         <p>Inga personuppgifter kommer att samlas in och resultaten från testerna kommer endast att användas i anonymiserad form i forskningssyfte.</p>

@@ -5,7 +5,7 @@ import Link from 'next/link'
 export default function Home() {
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <div className={styles.main}>
         <h1>Instruktioner</h1>
         <p>Varje spel spelas på en liten spelplan med några få platser och pilar som visar hur du kan förflytta dig mellan platserna. En av platserna är startpunkten. Varje spel spelas i 75 korta omgångar. I varje omgång börjar du i startpunkten och förflyttar dig till andra platser med hjälp av piltangenterna på datorn. När du kommer till vissa platser kan du vinna eller förlora poäng, med vissa sannolikheter. När du har nått vägs ände är omgången färdig och då räknas dina poäng för omgången ihop.</p>
         <p>När du börjar spela ett nytt spel vet du ingenting om hur just det spelet fungerar. Du behöver då prova dig fram i början för att få en bild av hur spelet fungerar och hur du kan göra för att samla så många poäng som möjligt.</p>

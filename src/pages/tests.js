@@ -1,4 +1,5 @@
 import { useState } from "react"
+import styles from "@/styles/Home.module.css"
 import Router from "next/router"
 import Link from "next/link"
 
@@ -11,8 +12,8 @@ export default function Test1() {
   const [game, setGame] = useState(prov1)
   const [isDone, setIsDone] = useState(false)
 
-  return <div>
-    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+  return <div className={styles.main}>
+    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', maxWidth: 800 }}>
       <button onClick={() => setGame(prov1)}>Prov 1</button>
       <button onClick={() => setGame(prov2)}>Prov 2</button>
     </div>

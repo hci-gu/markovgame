@@ -6,7 +6,6 @@ import styles from '../styles/Home.module.css'
 import { getParticipantId } from '@/utils/participant'
 
 import balloon from '@/games/balloon'
-import risktaking from '@/games/risktaking'
 import riskavoidance from '@/games/riskavoidance'
 import igtVariant from '@/games/igt-variant2'
 import double from '@/games/double'
@@ -40,7 +39,6 @@ export default function Home() {
 
   const games = [
     balloon,
-    risktaking,
     riskavoidance,
     igtVariant,
     double,
