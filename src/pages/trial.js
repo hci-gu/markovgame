@@ -64,6 +64,7 @@ export default function Home() {
     <>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         {gameOver && <TrialsOver participantId={participantId} />}
+        {!gameOver && <h1>Spel {gameNumber + 1} av {games.length}</h1>}
       </div>
       {!gameOver && <Game game={games[gameNumber]} onDone={onDone}/>}
       { promptNext && <div className={styles.promptNext} style={{ marginTop: '30px' }}><center>Tryck <a href="#" onClick={next}>här</a> för att gå vidare.</center></div> }
