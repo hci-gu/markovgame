@@ -22,6 +22,7 @@ const TrialsOver = ({ participantId }) => {
     {sent && <p>Tack för dina kommentarer!</p>}
     {!sent && <>
     <p>Om du har några kommentarer eller frågor, skriv dem nedan.</p>
+    <p>Berätta till exempel gärna om vilka strategier du använde när du spelade spelen.</p>
     <textarea style={{ width: '100%', height: '150px' }} value={comment} onChange={(e) => setComment(e.target.value)} />
     <button onClick={() => {
       registerFeedback(participantId, comment)
