@@ -6,7 +6,7 @@ import { getEdges, addNodeFromState, getAction, getReward, } from '@/utils/game'
 
 const NUM_TRIALS = 75
 
-export default function Game({ game, onDone }) {
+export default function Game({ game, onDone, numTrials = NUM_TRIALS }) {
   const nodes = useMemo(() => {
     const nodes = []
     addNodeFromState({ nodes, state: game.start, x: 0, y: 0 })
@@ -97,7 +97,7 @@ export default function Game({ game, onDone }) {
   }, [nodeAt, score, attempts, atEnd, nodes, gameOver])
 
   useEffect(() => {
-    if (attempts === NUM_TRIALS && !gameOver) {
+    if (attempts === numTrials && !gameOver) {
       setGameOver(true)
       onDone(score)
     }
@@ -125,7 +125,7 @@ export default function Game({ game, onDone }) {
         { atEnd && <text style={{ fontSize: 3, }} x={nodeAt.x * 10 + 50 + 6 * dir[0]} y={nodeAt.y * 10 + 50 + 5 * dir[1]} textAnchor="middle" dominantBaseline="middle" fill="black">{attemptScore}</text> }
       </svg>
       <div className={styles.score}>
-        Poäng: {score} Försök: { attempts }/{NUM_TRIALS}
+        Poäng: {score} Försök: { attempts }/{numTrials}
       </div>
       { atEnd && !gameOver && <div className={styles.end}>Slut! Tryck &#39;r&#39; för att spela igen.</div> }
       { gameOver && <div className={styles.end}>Spelet är slut! Din poäng blev {score}.</div> }
