@@ -125,7 +125,7 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS }) {
         { atEnd && <text style={{ fontSize: 3, }} x={nodeAt.x * 10 + 50 + 6 * dir[0]} y={nodeAt.y * 10 + 50 + 5 * dir[1]} textAnchor="middle" dominantBaseline="middle" fill="black">{attemptScore}</text> }
       </svg>
       <div className={styles.score}>
-        Poäng: {score} Försök: { attempts }/{numTrials}
+        Poäng: {score} Omgång: { attempts }/{numTrials}
       </div>
       { atEnd && !gameOver && <div className={styles.end}>Slut! Tryck &#39;r&#39; för att spela igen.</div> }
       { gameOver && <div className={styles.end}>Spelet är slut! Din poäng blev {score}.</div> }
