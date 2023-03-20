@@ -11,7 +11,38 @@ import igtVariant from '@/games/igt-variant2'
 import double from '@/games/double'
 import tripple from '@/games/tripple'
 
-import { registerScore, registerFeedback } from '@/utils/register'
+// import { registerScore, registerFeedback } from '@/utils/register'
+
+const registerScore = async (participantId, gameNumber, score) => {
+  const res = await fetch('/api/score', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      participantId,
+      gameNumber,
+      score
+    })
+  })
+  const data = await res.json()
+  return data
+}
+
+const registerFeedback = async (participantId, comment) => {
+  const res = await fetch('/api/feedback', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      participantId,
+      comment
+    })
+  })
+  const data = await res.json()
+  return data
+}
 
 const TrialsOver = ({ participantId }) => {
   const [comment, setComment] = useState('')
