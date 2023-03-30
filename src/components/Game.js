@@ -6,7 +6,61 @@ import { getEdges, addNodeFromState, getAction, getReward, } from '@/utils/game'
 
 const NUM_TRIALS = 75
 
-export default function Game({ game, onDone, numTrials = NUM_TRIALS }) {
+const Circle = ({ cx, cy, r, fill, stroke, rewards }) => {
+  if (!rewards) {
+    console.log(' no rewards')
+    return <circle cx={cx} cy={cy} r={r} fill={fill} stroke={stroke} />;
+  }
+  if (rewards.length === 1) {
+    return <g>
+      <circle cx={cx} cy={cy} r={r} fill={fill} stroke={stroke} />
+      <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle" fontSize={2} fill="white">
+        {rewards[0].value}
+      </text>
+    </g>
+  }
+
+  // Calculate the total probability mass
+  const totalP = rewards.reduce((acc, reward) => acc + reward.p, 0);
+
+  // Check that the sum of all p values adds up to one
+  if (totalP !== 1) {
+    throw new Error("The sum of all p values must be equal to one");
+  }
+
+  const colors = ["#f00", "#0f0", "#00f", "#ff0", "#0ff", "#f0f"]
+
+  // Calculate the angles for each segment based on the p values
+  let startAngle = -Math.PI / 2; // Start at the top of the circle
+  const paths = rewards.map((reward, i) => {
+    const endAngle = startAngle + 2 * Math.PI * reward.p;
+    const largeArcFlag = reward.p > 0.5 ? 1 : 0;
+    const x1 = Math.cos(startAngle) * r + cx;
+    const y1 = Math.sin(startAngle) * r + cy;
+    const x2 = Math.cos(endAngle) * r + cx;
+    const y2 = Math.sin(endAngle) * r + cy;
+    const labelAngle = (startAngle + endAngle) / 2;
+    const labelX = Math.cos(labelAngle) * r * 1.2 + cx;
+    const labelY = Math.sin(labelAngle) * r * 1.2 + cy;
+    const d = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArcFlag},1 ${x2},${y2} Z`;
+    startAngle = endAngle;
+    return <g key={reward.value}>
+      <path key={reward.value} d={d} fill={colors[i]} />
+      <text x={labelX} y={labelY} textAnchor="middle" fontSize={2}>
+          {reward.value}
+      </text>
+    </g>
+  });
+
+  return (
+    <svg width="100" height="100">
+      {stroke && stroke !== "none" && <circle cx={cx} cy={cy} r={r} fill="none" stroke={stroke} />}
+      {paths}
+    </svg>
+  );
+}
+
+export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = false, }) {
   const nodes = useMemo(() => {
     const nodes = []
     addNodeFromState({ nodes, state: game.start, x: 0, y: 0 })
@@ -107,17 +161,20 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS }) {
     <>
       <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ display: 'block', height: '80vh' }}>
         <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" 
-          refX="0" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="black" stroke="black" />
+          <marker id="arrowhead" markerWidth="20" markerHeight="17" 
+          refX="8" refY="7" orient="auto">
+            <polygon points="0 0, 20 7, 0 14" fill="black" stroke="black" />
           </marker>
         </defs>
 
-        {nodes.map((node) => (
-          <circle key={`c_node_${node.x}_${node.y}`} cx={node.x * 10 + 50} cy={node.y * 10 + 50} r="2" fill="black" stroke={node == nodeAt ? 'red' : 'none'} />
-        ))}
         {edges.map((edge) => (
           <Edge key={`${edge.source.x} ${edge.source.y} ${edge.target.x} ${edge.target.y}`} edge={edge} />
+        ))}
+        {!showData && nodes.map((node) => (
+          <circle key={`c_node_${node.x}_${node.y}`} cx={node.x * 10 + 50} cy={node.y * 10 + 50} r="2" fill={node.color} stroke={node == nodeAt ? 'red' : 'none'} />
+        ))}
+        {showData && nodes.map((node) => (
+          <Circle key={`a_node_${node.x}_${node.y}`} cx={node.x * 10 + 50} cy={node.y * 10 + 50} r={2} fill={node.color} stroke={node == nodeAt ? 'red' : 'none'} rewards={node.rewards} />
         ))}
         {nodes.map((node) => (
           <text style={{ fontSize: 2, }} key={`t_node_${node.x}_${node.y}`} x={node.x * 10 + 50} y={node.y * 10 + 50} textAnchor="middle" dominantBaseline="middle" fill="white">{node.score}</text>
