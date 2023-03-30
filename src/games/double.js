@@ -1,4 +1,4 @@
-import state from '@/games/state'
+import state from './state.js'
 
 const end = state({ rewards: [{ p: 1.0, value: 0 }] })
 const shared = state({

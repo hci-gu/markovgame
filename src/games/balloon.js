@@ -1,4 +1,4 @@
-import state from '@/games/state'
+import state from './state.js'
 
 const balloon = {
   start: state({
