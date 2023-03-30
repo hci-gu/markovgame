@@ -33,6 +33,21 @@ const makeRoom = ({ nodes, x, y, dx = 0, dy = 0 }) => {
   // }
 }
 
+const colors = [
+  "#1f77b4", // blue
+  "#ff7f0e", // orange
+  "#2ca02c", // green
+  "#d62728", // red
+  "#9467bd", // purple
+  "#8c564b", // brown
+  "#e377c2", // pink
+  "#7f7f7f", // gray
+  "#bcbd22", // yellow-green
+  "#17becf", // blue-green
+  "#aec7e8", // light blue
+  "#ffbb78" // light orange
+]
+
 const addNodeFromState = ({ nodes, state, x, y }) => {
   const existingNode = nodes.find(({ state: s }) => (s === state))
   if (existingNode) return existingNode
@@ -43,6 +58,7 @@ const addNodeFromState = ({ nodes, state, x, y }) => {
     rewards: state.rewards,
     actions: null,
     state: state,
+    color: colors[nodes.length % colors.length],
   }
   nodes.push(node)
 
