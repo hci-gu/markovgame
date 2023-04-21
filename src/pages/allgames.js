@@ -29,17 +29,18 @@ import memory4 from '@/games/memory4'
 import sequence from '@/games/sequence'
 import threeballoons from '@/games/threeballoons'
 
-import prov1 from '@/games/prov1'
-import prov2 from '@/games/prov2'
+// import prov1 from '@/games/prov1'
+// import prov2 from '@/games/prov2'
 import double from '@/games/double'
-import double1 from '@/games/double1'
-import tripple from '@/games/tripple'
+// import double1 from '@/games/double1'
+// import tripple from '@/games/tripple'
 import tripple1 from '@/games/tripple1'
 import tripple2 from '@/games/tripple2'
 import tripple3 from '@/games/tripple3'
+import tripple4 from '@/games/tripple4'
 
 export default function Home() {
-  const [game, setGame] = useState(igt)
+  const [game, setGame] = useState(double)
 
   // get query anchor value
   const anchor = typeof window !== 'undefined' ? window.location.hash : null
@@ -49,12 +50,13 @@ export default function Home() {
   }
 
   const games = {
-    'Single 1': balloon,
+    // 'Single 1': balloon,
     'Double 1': double,
-    'Double 2': double1,
+    // 'Double 2': double1,
     'Tripple 1': tripple1,
     'Tripple 2': tripple2,
     'Tripple 3': tripple3,
+    'Tripple 4': tripple4,
     // 'Single 1': balloon,
     // 'Single 2': balloon2,
     // 'Single 3': balloon3,

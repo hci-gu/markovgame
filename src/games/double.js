@@ -8,7 +8,7 @@ const shared = state({
   ],
   actions: {
     left: [{ p: 1.0, next: state({
-      reward: [{ p: 0.5, value: 0 }, { p: 0.5, value: -3 }],
+      rewards: [{ p: 0.5, value: 0 }, { p: 0.5, value: -3 }],
       actions: {
         up: [{ p: 1.0, next: end }],
       }
