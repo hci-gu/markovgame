@@ -184,7 +184,7 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
 
   return (
     <>
-      <svg width="100%" height="100%" viewBox="0 0 70 70" style={{ display: 'block', height: '80vh' }}>
+      <svg width="100%" height="90%" viewBox="0 0 70 70" style={{ display: 'block', height: '70vh' }}>
         <defs>
           <marker id="arrowhead" markerWidth="20" markerHeight="17" 
           refX="8" refY="7" orient="auto">
