@@ -5,8 +5,8 @@ import Link from "next/link"
 
 import Game from "@/components/Game"
 
-import prov1 from "@/games/prov1"
-import prov2 from "@/games/prov2"
+import prov1 from "@/games/threeballoons"
+import prov2 from "@/games/planning2"
 
 export default function Test1() {
   const [game, setGame] = useState(prov1)

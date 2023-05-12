@@ -5,13 +5,11 @@ import styles from '../styles/Home.module.css'
 
 import { getParticipantId } from '@/utils/participant'
 
-import balloon from '@/games/balloon'
-import riskavoidance from '@/games/riskavoidance'
-import igtVariant from '@/games/igt-variant2'
 import double from '@/games/double'
-import tripple from '@/games/tripple'
-
-// import { registerScore, registerFeedback } from '@/utils/register'
+import tripple1 from '@/games/tripple1'
+import tripple2 from '@/games/tripple2'
+import tripple3 from '@/games/tripple3'
+import tripple4 from '@/games/tripple4'
 
 const registerScore = async (participantId, gameNumber, score) => {
   const res = await fetch('/api/score', {
@@ -70,11 +68,11 @@ export default function Home() {
   const [promptNext, setPromptNext] = useState(false)
 
   const games = [
-    balloon,
-    riskavoidance,
-    igtVariant,
     double,
-    tripple,
+    tripple1,
+    tripple2,
+    tripple3,
+    tripple4,
   ]
 
   const onDone = (score) => {
