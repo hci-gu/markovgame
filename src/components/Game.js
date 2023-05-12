@@ -60,6 +60,23 @@ const Circle = ({ cx, cy, r, fill, stroke, rewards }) => {
   );
 }
 
+const possibleNextAction = (node, current) => {
+  const next = []
+  if (current.actions?.up && current.actions.up[0].next === node) {
+    return current.actions.up[0]
+  }
+  if (current.actions?.down && current.actions.down[0].next === node) {
+    return current.actions.down[0]
+  }
+  if (current.actions?.left && current.actions.left[0].next === node) {
+    return current.actions.left[0]
+  }
+  if (current.actions?.right && current.actions.right[0].next === node) {
+    return current.actions.right[0]
+  }
+  return null
+}
+
 export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = false, }) {
   const nodes = useMemo(() => {
     const nodes = []
@@ -90,6 +107,35 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
     setGameOver(false)
   }, [game, nodes])
 
+  const takeAction = (action) => {
+    if (action) {
+      let reward = 0
+      if (action.rewards) {
+        reward += getReward(action.rewards)
+      }
+      if (action.next.rewards) {
+        reward += getReward(action.next.rewards)
+      }
+      setLastReward(reward)
+      setAttemptScore(attemptScore => attemptScore + reward)
+      setScore(score => score + reward)
+      action.next.score = reward
+      setNodeAt(action.next)
+      if (action.next.actions == null) {
+        setAtEnd(true)
+        setAttempts(attempts + 1)
+      }
+    }
+  }
+
+  const restartGame = () => {
+    nodes.forEach(node => node.score = null)
+    setNodeAt(nodes[0])
+    setAtEnd(false)
+    setAttemptScore(0)
+    setLastReward(0)
+  }
+
   // listen to keyboard events
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -116,32 +162,11 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
         }
       }
 
-      if (action) {
-        let reward = 0
-        if (action.rewards) {
-          reward += getReward(action.rewards)
-        }
-        if (action.next.rewards) {
-          reward += getReward(action.next.rewards)
-        }
-        setLastReward(reward)
-        setAttemptScore(attemptScore => attemptScore + reward)
-        setScore(score => score + reward)
-        action.next.score = reward
-        setNodeAt(action.next)
-        if (action.next.actions == null) {
-          setAtEnd(true)
-          setAttempts(attempts + 1)
-        }
-      }
+      takeAction(action)
 
       // if key is 'r'
       if (event.key == 'r' && atEnd && !gameOver) {
-        nodes.forEach(node => node.score = null)
-        setNodeAt(nodes[0])
-        setAtEnd(false)
-        setAttemptScore(0)
-        setLastReward(0)
+        restartGame()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -171,7 +196,18 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
           <Edge key={`${edge.source.x} ${edge.source.y} ${edge.target.x} ${edge.target.y}`} edge={edge} />
         ))}
         {!showData && nodes.map((node) => (
-          <circle key={`c_node_${node.x}_${node.y}`} cx={node.x * 10 + 50} cy={node.y * 10 + 50} r="2" fill={node.color} stroke={node == nodeAt ? 'red' : 'none'} />
+          <circle
+            key={`c_node_${node.x}_${node.y}`} 
+            cx={node.x * 10 + 50} 
+            cy={node.y * 10 + 50} 
+            r="2" 
+            fill={node.color} 
+            stroke={node == nodeAt ? 'red' : 'none'} 
+            onClick={() => {
+              const action = possibleNextAction(node, nodeAt)
+              takeAction(action)
+            }}
+            />
         ))}
         {showData && nodes.map((node) => (
           <Circle key={`a_node_${node.x}_${node.y}`} cx={node.x * 10 + 50} cy={node.y * 10 + 50} r={2} fill={node.color} stroke={node == nodeAt ? 'red' : 'none'} rewards={node.rewards} />
@@ -184,7 +220,7 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
       <div className={styles.score}>
         Poäng: {score} Omgång: { attempts }/{numTrials}
       </div>
-      { atEnd && !gameOver && <div className={styles.end}>Slut! Tryck &#39;r&#39; för att spela igen.</div> }
+      { atEnd && !gameOver && <div className={styles.end} onClick={restartGame}>Slut! Tryck &#39;r&#39; för att spela igen.</div> }
       { gameOver && <div className={styles.end}>Spelet är slut! Din poäng blev {score}.</div> }
     </>
   )
