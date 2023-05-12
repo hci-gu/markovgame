@@ -184,7 +184,7 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
 
   return (
     <>
-      <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ display: 'block', height: '80vh' }}>
+      <svg width="100%" height="100%" viewBox="0 0 70 70" style={{ display: 'block', height: '80vh' }}>
         <defs>
           <marker id="arrowhead" markerWidth="20" markerHeight="17" 
           refX="8" refY="7" orient="auto">
@@ -198,8 +198,8 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
         {!showData && nodes.map((node) => (
           <circle
             key={`c_node_${node.x}_${node.y}`} 
-            cx={node.x * 10 + 50} 
-            cy={node.y * 10 + 50} 
+            cx={node.x * 10 + 35} 
+            cy={node.y * 10 + 35} 
             r="2" 
             fill={node.color} 
             stroke={node == nodeAt ? 'red' : 'none'} 
@@ -210,12 +210,34 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
             />
         ))}
         {showData && nodes.map((node) => (
-          <Circle key={`a_node_${node.x}_${node.y}`} cx={node.x * 10 + 50} cy={node.y * 10 + 50} r={2} fill={node.color} stroke={node == nodeAt ? 'red' : 'none'} rewards={node.rewards} />
+          <Circle
+            key={`a_node_${node.x}_${node.y}`} 
+            cx={node.x * 10 + 35} 
+            cy={node.y * 10 + 35} 
+            r={2} 
+            fill={node.color} 
+            stroke={node == nodeAt ? 'red' : 'none'} 
+            rewards={node.rewards} 
+            />
         ))}
         {nodes.map((node) => (
-          <text style={{ fontSize: 2, }} key={`t_node_${node.x}_${node.y}`} x={node.x * 10 + 50} y={node.y * 10 + 50} textAnchor="middle" dominantBaseline="middle" fill="white">{node.score}</text>
+          <text 
+            style={{ fontSize: 2, }} 
+            key={`t_node_${node.x}_${node.y}`} 
+            x={node.x * 10 + 35} 
+            y={node.y * 10 + 35}
+            textAnchor="middle" 
+            dominantBaseline="middle" 
+            fill="white">{node.score}</text>
         ))}
-        { atEnd && <text style={{ fontSize: 3, }} x={nodeAt.x * 10 + 50 + 6 * dir[0]} y={nodeAt.y * 10 + 50 + 5 * dir[1]} textAnchor="middle" dominantBaseline="middle" fill="black">{attemptScore}</text> }
+        { atEnd && <text 
+          style={{ fontSize: 3, }} 
+          x={nodeAt.x * 10 + 35 + 6 * dir[0]} 
+          y={nodeAt.y * 10 + 35 + 5 * dir[1]} 
+          textAnchor="middle" 
+          dominantBaseline="middle" 
+          fill="black">{attemptScore}
+        </text> }
       </svg>
       <div className={styles.score}>
         Poäng: {score} Omgång: { attempts }/{numTrials}

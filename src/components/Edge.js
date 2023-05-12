@@ -1,9 +1,9 @@
 export const Edge = ({ edge }) => {
     const { source, target, dir, p } = edge
-    const x1 = source.x * 10 + 50
-    const y1 = source.y * 10 + 50
-    const x2 = target.x * 10 + 50
-    const y2 = target.y * 10 + 50
+    const x1 = source.x * 10 + 35
+    const y1 = source.y * 10 + 35
+    const x2 = target.x * 10 + 35
+    const y2 = target.y * 10 + 35
     const ys = Math.sign(y2 - y1)
     const xs = Math.sign(x2 - x1)
 
