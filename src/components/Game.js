@@ -2,7 +2,7 @@ import styles from '@/styles/Home.module.css'
 import { useState, useEffect, useMemo, } from 'react'
 import { Edge } from './Edge'
 
-import { getEdges, addNodeFromState, getAction, getReward, } from '@/utils/game'
+import { getEdges, addNodeFromState, getAction, getReward, centerNodes, } from '@/utils/game'
 
 const NUM_TRIALS = 75
 
@@ -93,6 +93,8 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
   const nodes = useMemo(() => {
     const nodes = []
     addNodeFromState({ nodes, state: game.start, x: 0, y: 0 })
+    centerNodes({ nodes })
+    console.log({ nodes })
     return nodes
   }, [game])
 
@@ -252,6 +254,16 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
           textAnchor="middle" 
           dominantBaseline="middle" 
           fill="black">{attemptScore}
+        </text> }
+        { atEnd && !gameOver && <text
+          onClick={restartGame}
+          style={{ fontSize: 3, }}
+          y={10}
+          x={35}
+          textAnchor='middle'
+          dominantBaseline={'top'}
+          >
+            Tryck här för att fortsätta.
         </text> }
       </svg>
       <div className={styles.score}>

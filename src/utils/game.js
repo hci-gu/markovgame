@@ -208,6 +208,23 @@ const getEdges = ({ nodes }) => {
   return edges
 }
 
+const centerNodes = ({ nodes }) => {
+  // center based on max/min x and max/min y
+  const x = nodes.map(n => n.x)
+  const y = nodes.map(n => n.y)
+  const minX = Math.min(...x)
+  const maxX = Math.max(...x)
+  const minY = Math.min(...y)
+  const maxY = Math.max(...y)
+  const dx = (maxX + minX) / 2
+  const dy = (maxY + minY) / 2
+  console.log({ minX, maxX, minY, maxY, dx, dy })
+  for (let i = 0; i < nodes.length; i++) {
+    nodes[i].x -= dx
+    nodes[i].y -= dy
+  }
+}
+
 const getAction = (actions) => {
   const r = Math.random()
   let p = 0
@@ -236,4 +253,5 @@ export {
     getReward,
     getEdges,
     addNodeFromState,
+    centerNodes,
 }
