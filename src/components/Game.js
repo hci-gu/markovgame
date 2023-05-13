@@ -63,16 +63,28 @@ const Circle = ({ cx, cy, r, fill, stroke, rewards }) => {
 const possibleNextAction = (node, current) => {
   const next = []
   if (current.actions?.up && current.actions.up[0].next === node) {
-    return current.actions.up[0]
+    return {
+      action: current.actions.up[0],
+      dir: [0, -1],
+    }
   }
   if (current.actions?.down && current.actions.down[0].next === node) {
-    return current.actions.down[0]
+    return {
+      action: current.actions.down[0],
+      dir: [0, 1],
+    }
   }
   if (current.actions?.left && current.actions.left[0].next === node) {
-    return current.actions.left[0]
+    return {
+      action: current.actions.left[0],
+      dir: [-1, 0],
+    }
   }
   if (current.actions?.right && current.actions.right[0].next === node) {
-    return current.actions.right[0]
+    return {
+      action: current.actions.right[0],
+      dir: [1, 0],
+    }
   }
   return null
 }
@@ -204,8 +216,11 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
             fill={node.color} 
             stroke={node == nodeAt ? 'red' : 'none'} 
             onClick={() => {
-              const action = possibleNextAction(node, nodeAt)
-              takeAction(action)
+              const actionAndDir = possibleNextAction(node, nodeAt)
+              if (actionAndDir) {
+                setDir(actionAndDir.dir)
+                takeAction(actionAndDir.action)
+              }
             }}
             />
         ))}
