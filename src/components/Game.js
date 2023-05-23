@@ -6,14 +6,36 @@ import { getEdges, addNodeFromState, getAction, getReward, centerNodes, } from '
 
 const NUM_TRIALS = 75
 
-const Circle = ({ cx, cy, r, fill, stroke, rewards }) => {
-  if (!rewards) {
-    console.log(' no rewards')
-    return <circle cx={cx} cy={cy} r={r} fill={fill} stroke={stroke} />;
-  }
-  if (rewards.length === 1) {
+const Circle = ({ cx, cy, r, fill, stroke, rewards, score, showData, onClick }) => {
+  const [opacity, setOpacity] = useState(1.0)
+
+  useEffect(() => {
+    let opacity = 1.0
+    let timeout = null
+    if (typeof score !== 'undefined') {
+      const dec = () => {
+        opacity -= 0.05
+        setOpacity(opacity)
+        if (opacity > 0) {
+          timeout = setTimeout(dec, 20)
+        }
+      }
+      timeout = setTimeout(dec, 20)
+      return () => clearTimeout(timeout)
+    }
+  }, [score])
+
+  const scoreColor = score > 0 ? 'green' : 'red'
+
+  if (!rewards || !showData) {
     return <g>
-      <circle cx={cx} cy={cy} r={r} fill={fill} stroke={stroke} />
+      <circle cx={cx} cy={cy} r={r} fill={fill} stroke={stroke} onClick={onClick} />
+      {typeof score !== 'undefined' && <circle style={{ opacity: opacity }} cx={cx} cy={cy} r={r * 1.8} fill={scoreColor} />}
+    </g>
+  }
+  if (rewards.length === 1 || !showData) {
+    return <g>
+      <circle cx={cx} cy={cy} r={r} fill={fill} stroke={stroke} onClick={onClick} />
       <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle" fontSize={2} fill="white">
         {rewards[0].value}
       </text>
@@ -44,7 +66,7 @@ const Circle = ({ cx, cy, r, fill, stroke, rewards }) => {
     const labelY = Math.sin(labelAngle) * r * 1.2 + cy;
     const d = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArcFlag},1 ${x2},${y2} Z`;
     startAngle = endAngle;
-    return <g key={reward.value}>
+    return <g key={reward.value} onClick={onClick}>
       <path key={reward.value} d={d} fill={colors[i]} />
       <text x={labelX} y={labelY} textAnchor="middle" fontSize={2}>
           {reward.value}
@@ -56,6 +78,7 @@ const Circle = ({ cx, cy, r, fill, stroke, rewards }) => {
     <svg width="100" height="100">
       {stroke && stroke !== "none" && <circle cx={cx} cy={cy} r={r} fill="none" stroke={stroke} />}
       {paths}
+      <circle style={{ transition: 'opacity ease-out', opacity: opacity }} cx={cx} cy={cy} r={r * 1.8} fill={fill} stroke={stroke} />
     </svg>
   );
 }
@@ -66,24 +89,28 @@ const possibleNextAction = (node, current) => {
     return {
       action: current.actions.up[0],
       dir: [0, -1],
+      actionName: 'up',
     }
   }
   if (current.actions?.down && current.actions.down[0].next === node) {
     return {
       action: current.actions.down[0],
       dir: [0, 1],
+      actionName: 'down',
     }
   }
   if (current.actions?.left && current.actions.left[0].next === node) {
     return {
       action: current.actions.left[0],
       dir: [-1, 0],
+      actionName: 'left',
     }
   }
   if (current.actions?.right && current.actions.right[0].next === node) {
     return {
       action: current.actions.right[0],
       dir: [1, 0],
+      actionName: 'right',
     }
   }
   return null
@@ -94,7 +121,6 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
     const nodes = []
     addNodeFromState({ nodes, state: game.start, x: 0, y: 0 })
     centerNodes({ nodes })
-    console.log({ nodes })
     return nodes
   }, [game])
 
@@ -106,6 +132,48 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
   const [atEnd, setAtEnd] = useState(false)
   const [dir, setDir] = useState([0, 0])
   const [gameOver, setGameOver] = useState(false)
+  const [actions, setActions] = useState([])
+
+  const [repeat, setRepeat] = useState(false)
+  const [repeatActionNum, setRepeatActionNum] = useState(0)
+
+  useEffect(() => {
+    if (repeat) {
+      if (repeatActionNum >= actions.length) {
+        if (attempts === numTrials) {
+          setGameOver(true)
+          onDone({ score, attempts })
+          setRepeat(false)
+        } else {
+          setTimeout(() => {
+            nodes.forEach(node => node.score = undefined)
+            setNodeAt(nodes[0])
+            let nodeAt = nodes[0]
+            setAtEnd(false)
+            // setScore(0)
+            setAttemptScore(0)
+            setLastReward(0)
+            setRepeatActionNum(0)
+          }, 100)
+        }
+        return
+      }
+
+      const actionName = actions[repeatActionNum]
+      if (actionName) {
+        console.log(actionName, nodeAt, repeatActionNum,)
+        let action = getAction(nodeAt.actions[actionName])
+        takeAction(action)
+
+        setTimeout(() => {
+          setRepeatActionNum(repeatActionNum => repeatActionNum + 1)
+        }, 20)
+      } else {
+        setRepeat(false)
+        setRepeatActionNum(0)
+      }
+    }
+  }, [repeat, repeatActionNum])
 
   const edges = useMemo(() => {
     return getEdges({ nodes })
@@ -119,6 +187,9 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
     setLastReward(0)
     setAttemptScore(0)
     setGameOver(false)
+    setActions([])
+    setRepeat(false)
+    setRepeatActionNum(0)
   }, [game, nodes])
 
   const takeAction = (action) => {
@@ -137,17 +208,18 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
       setNodeAt(action.next)
       if (action.next.actions == null) {
         setAtEnd(true)
-        setAttempts(attempts + 1)
+        setAttempts(attempts => attempts + 1)
       }
     }
   }
 
   const restartGame = () => {
-    nodes.forEach(node => node.score = null)
+    nodes.forEach(node => node.score = undefined)
     setNodeAt(nodes[0])
     setAtEnd(false)
     setAttemptScore(0)
     setLastReward(0)
+    setActions([])
   }
 
   // listen to keyboard events
@@ -158,28 +230,32 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
         if (nodeAt.actions?.up) {
           action = getAction(nodeAt.actions.up)
           setDir([0, -1])
+          setActions(actions => [...actions, 'up'])
         }
       } else if (event.key == 'ArrowDown') {
         if (nodeAt.actions?.down) {
           action = getAction(nodeAt.actions.down)
           setDir([0, 1])
+          setActions(actions => [...actions, 'down'])
         }
       } else if (event.key == 'ArrowLeft') {
         if (nodeAt.actions?.left) {
           action = getAction(nodeAt.actions.left)
           setDir([-1, 0])
+          setActions(actions => [...actions, 'left'])
         }
       } else if (event.key == 'ArrowRight') {
         if (nodeAt.actions?.right) {
           action = getAction(nodeAt.actions.right)
           setDir([1, 0])
+          setActions(actions => [...actions, 'right'])
         }
       }
 
       takeAction(action)
 
       // if key is 'r'
-      if (event.key == 'r' && atEnd && !gameOver) {
+      if (event.key == 'r' && atEnd && !gameOver && !repeat) {
         restartGame()
       }
     }
@@ -196,6 +272,37 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
     }
   }, [attempts, score, onDone, gameOver])
 
+  const repeatActions = () => {
+    // console.log('repeat actions', actions)
+    // let localAttempts = attempts
+    // while(localAttempts < numTrials) {
+    //   setNodeAt(nodes[0])
+    //   let nodeAt = nodes[0]
+    //   setAtEnd(false)
+    //   setAttemptScore(0)
+    //   setLastReward(0)
+    //   for (let i = 0;i<actions.length;i++) {
+    //     let actionName = actions[i]
+    //     console.log(actionName, nodeAt)
+    //     let action = getAction(nodeAt.actions[actionName])
+    //     takeAction(action)
+    //     nodeAt = action.next
+    //   }
+    //   localAttempts++
+    // }
+    // setAtEnd(true)
+    // setGameOver(true)
+    console.log('repeating', actions)
+    if (confirm('Är du säker på att du vill upprepa samma väg som tidigare tills du spelar alla omgångar?')) {
+      setRepeat(true)
+      setRepeatActionNum(0)
+      setNodeAt(nodes[0])
+      setAtEnd(false)
+      setAttemptScore(0)
+      setLastReward(0)
+    }
+  }
+
   return (
     <>
       <svg width="100%" height="90%" viewBox="0 0 70 70" style={{ display: 'block', height: '70vh' }}>
@@ -205,36 +312,28 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
             <polygon points="0 0, 20 7, 0 14" fill="black" stroke="black" />
           </marker>
         </defs>
-
         {edges.map((edge) => (
           <Edge key={`${edge.source.x} ${edge.source.y} ${edge.target.x} ${edge.target.y}`} edge={edge} />
         ))}
-        {!showData && nodes.map((node) => (
-          <circle
-            key={`c_node_${node.x}_${node.y}`} 
-            cx={node.x * 10 + 35} 
-            cy={node.y * 10 + 35} 
-            r="2" 
-            fill={node.color} 
-            stroke={node == nodeAt ? 'red' : 'none'} 
-            onClick={() => {
-              const actionAndDir = possibleNextAction(node, nodeAt)
-              if (actionAndDir) {
-                setDir(actionAndDir.dir)
-                takeAction(actionAndDir.action)
-              }
-            }}
-            />
-        ))}
-        {showData && nodes.map((node) => (
+        {nodes.map((node) => (
           <Circle
             key={`a_node_${node.x}_${node.y}`} 
+            showData={showData}
             cx={node.x * 10 + 35} 
             cy={node.y * 10 + 35} 
             r={2} 
             fill={node.color} 
             stroke={node == nodeAt ? 'red' : 'none'} 
             rewards={node.rewards} 
+            score={node.score}
+            onClick={() => {
+              const actionAndDir = possibleNextAction(node, nodeAt)
+              if (actionAndDir) {
+                setDir(actionAndDir.dir)
+                setActions(actions => [...actions, actionAndDir.actionName])
+                takeAction(actionAndDir.action)
+              }
+            }}
             />
         ))}
         {nodes.map((node) => (
@@ -255,7 +354,7 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
           dominantBaseline="middle" 
           fill="black">{attemptScore}
         </text> }
-        { atEnd && !gameOver && <text
+        { atEnd && !gameOver && !repeat && <text
           onClick={restartGame}
           style={{ fontSize: 3, }}
           y={10}
@@ -265,6 +364,16 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
           >
             Tryck här för att fortsätta.
         </text> }
+        { atEnd && !gameOver && !repeat && <text
+          onClick={() => repeatActions()}
+          fontSize={3}
+          y={65}
+          x={35}
+          dominantBaseline={'bottom'}
+          textAnchor='middle'
+          >
+            Upprepa senaste väg &gt;&gt;
+        </text>}
       </svg>
       <div className={styles.score}>
         Poäng: {score} Omgång: { attempts }/{numTrials}
