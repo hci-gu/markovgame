@@ -142,7 +142,7 @@ export default function Game({ game, onDone, numTrials = NUM_TRIALS, showData = 
       if (repeatActionNum >= actions.length) {
         if (attempts === numTrials) {
           setGameOver(true)
-          onDone({ score, attempts })
+          // onDone({ score, attempts })
           setRepeat(false)
         } else {
           setTimeout(() => {
